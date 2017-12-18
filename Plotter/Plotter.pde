@@ -24,25 +24,25 @@ JSONObject plotterConfigJSON;
 
 // plots
 
-Graph LineGraph = new Graph(265, 140, 650, 400, color (20, 20, 200));
-
-float[][] lineGraphValues = new float[2][500];
-float[] lineGraphSampleNumbers = new float[500];
-ArrayList<Float> fLineGraphSampleNumbers = new ArrayList<Float>();
-ArrayList<Float> fLineGraphValues = new ArrayList<Float>();
-float[] reversenumbers = new float[36000];
-color[] graphColors = new color[2];
+Graph LineGraph;
+float[][] lineGraphValues;
+float[] lineGraphSampleNumbers;
+ArrayList<Float> fLineGraphSampleNumbers;
+ArrayList<Float> fLineGraphValues;
+float[] reversenumbers;
+color[] graphColors;
 PrintWriter output;
-boolean scroll = true;
-boolean start = false;
-int maxY = 50;
-int minY = 0;
-int minx = 0;
-int dArraySize = 0;
-String maxT = "0.00";
-String maxP = "0.00";
-int time = 0;
-int readCount = 0;
+boolean scroll;
+boolean start;
+boolean view;
+int maxY;
+int minY;
+int minx;
+int dArraySize;
+String maxT;
+String maxP;
+int time;
+int readCount;
 Textlabel tDisplay;
 Textlabel mTDisplay;
 Textlabel pDisplay;
@@ -51,12 +51,33 @@ Textfield path;
 Textfield fileName;
 Toggle scrollToggle;
 // helper for saving the executing path
-String topSketchPath = "";
+String topSketchPath;
 
 void setup() {
+  
+  LineGraph = new Graph(340, 140, 830, 470, color (20, 20, 200));
+  lineGraphValues = new float[2][500];
+  lineGraphSampleNumbers = new float[500];
+  fLineGraphSampleNumbers = new ArrayList<Float>();  
+  fLineGraphValues = new ArrayList<Float>();
+  reversenumbers = new float[36000];
+  graphColors = new color[2];
+  scroll = true;
+  start = false;
+  view = false;
+  maxY = 50;
+  minY = 0;
+  minx = 0;
+  dArraySize = 0;
+  maxT = "0.00";
+  maxP = "0.00";  
+  time = 0;
+  readCount = 0;
+  topSketchPath = "";
+  
   //println(fLineGraphSampleNumbers);
   frame.setTitle("Realtime plotter");
-  size(980, 620);
+  size(1240, 720);
 
   // set line graph colors
   addNumbers();  
@@ -108,26 +129,27 @@ void setup() {
   cp5.addButton("Save").setPosition(x = x+110, y).setWidth(40);
   cp5.addButton("Start").setPosition(x=x+90, y).setWidth(60);
   cp5.addButton("Stop").setPosition(x+80, y).setWidth(60);
+  cp5.addButton("Restart").setPosition(x+80, y).setWidth(60);
   
-  cp5.addToggle("scroll").setPosition(x=110, y=105).setMode(ControlP5.SWITCH);
-  cp5.addTextlabel("label6").setText("Scroll [on/0ff]").setPosition(x=4, y= 105).setColor(0).setFont(createFont("Georgia",12));
+  scrollToggle = cp5.addToggle("scroll").setPosition(x=180, y=105).setMode(ControlP5.SWITCH);
+  cp5.addTextlabel("label6").setText("Scroll [on/off]").setPosition(x=10, y= 105).setColor(0).setFont(createFont("Arial",14));
   
   
-  cp5.addTextlabel("label").setText("Temperature").setPosition(x=4, y= 150).setColor(0).setFont(createFont("Georgia",12));
-  cp5.addTextlabel("label2").setText("Current Value").setPosition(x=10, y= 180).setColor(0).setFont(createFont("Georgia",10));
-  cp5.addTextlabel("label3").setText("Max Value").setPosition(x=10, y= 208).setColor(0).setFont(createFont("Georgia",10));
-  tDisplay = cp5.addTextlabel("digital").setText("45").setPosition(x=106, y = 179).setColor(0).setFont(createFont("Digital-7",18));
-  mTDisplay = cp5.addTextlabel("digital2").setText("45").setPosition(x=106, y = 205).setColor(0).setFont(createFont("Digital-7",18));
-  cp5.addToggle("lgVisible1").setPosition(x=110, y=150).setValue(int(getPlotterConfigString("lgVisible1"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[0]);
+  cp5.addTextlabel("label").setText("Temperature [C°]").setPosition(x=10, y= 150).setColor(0).setFont(createFont("Arial",14));
+  cp5.addTextlabel("label2").setText("Current Value").setPosition(x=10, y= 180).setColor(0).setFont(createFont("Arial",12));
+  cp5.addTextlabel("label3").setText("Max Value").setPosition(x=10, y= 208).setColor(0).setFont(createFont("Arial",12));
+  tDisplay = cp5.addTextlabel("digital").setText("45").setPosition(x=176, y = 179).setColor(0).setFont(createFont("Digital-7",18));
+  mTDisplay = cp5.addTextlabel("digital2").setText("45").setPosition(x=176, y = 205).setColor(0).setFont(createFont("Digital-7",18));
+  cp5.addToggle("lgVisible1").setPosition(x=180, y=150).setValue(int(getPlotterConfigString("lgVisible1"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[0]);
   cp5.addButton("reset").setPosition(x=70, y= 348).setWidth(35).setHeight(12);
   
-  cp5.addTextlabel("multipliers").setText("Pressure").setPosition(x=4, y = 260).setColor(0).setFont(createFont("Georgia",12));
-  cp5.addTextlabel("label4").setText("Current Value").setPosition(x=10, y= 290).setColor(0).setFont(createFont("Georgia",10));
-  cp5.addTextlabel("label5").setText("Max Value").setPosition(x=10, y= 318).setColor(0).setFont(createFont("Georgia",10));
-  pDisplay = cp5.addTextlabel("digital3").setText("45").setPosition(x=106, y = 289).setColor(0).setFont(createFont("Digital-7",18));
-  mPDisplay = cp5.addTextlabel("digital4").setText("45").setPosition(x=106, y = 315).setColor(0).setFont(createFont("Digital-7",18));
+  cp5.addTextlabel("multipliers").setText("Load [N]").setPosition(x=10, y = 260).setColor(0).setFont(createFont("Arial",14));
+  cp5.addTextlabel("label4").setText("Current Value").setPosition(x=15, y= 290).setColor(0).setFont(createFont("Arial",12));
+  cp5.addTextlabel("label5").setText("Max Value").setPosition(x=15, y= 318).setColor(0).setFont(createFont("Arial",12));
+  pDisplay = cp5.addTextlabel("digital3").setText("45").setPosition(x=176, y = 289).setColor(0).setFont(createFont("Digital-7",18));
+  mPDisplay = cp5.addTextlabel("digital4").setText("45").setPosition(x=176, y = 315).setColor(0).setFont(createFont("Digital-7",18));
   
-  cp5.addToggle("lgVisible2").setPosition(x, y=258).setValue(int(getPlotterConfigString("lgVisible2"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[1]);
+  cp5.addToggle("lgVisible2").setPosition(x=180, y=258).setValue(int(getPlotterConfigString("lgVisible2"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[1]);
  
   Label label = path.getCaptionLabel();
   label.setColor(color(192, 192, 192));
@@ -142,7 +164,7 @@ void draw() {
   /* Read serial and update values */
   if (mockupSerial || serialPort.available() > 0) {
     String myString = "";
-    if (!mockupSerial) {
+    if (!mockupSerial && !view) {
       try {
         serialPort.readBytesUntil('\r', inBuffer);
         readCount++;
@@ -171,9 +193,7 @@ void draw() {
       }
       myString = new String(inBuffer);
     }
-    else {
-      myString = mockupSerialFunction();
-    }
+    
 
     //println(myString);
   //  println(scroll);
@@ -216,7 +236,7 @@ void draw() {
           for (int k=0; k<lineGraphValues[i].length-1; k++) {
             lineGraphValues[i][k] = lineGraphValues[i][k+1];
           }
-          if (i == 0){
+          if (i == 0 && start){
             fLineGraphValues.add(float(nums[0]));
              
           }
@@ -243,11 +263,11 @@ void draw() {
   // draw the line graphs
   fill(220,220,220);
   stroke(0);
-  rect(0,0,978,618);//backgorund
+  rect(0,0,1238,718);//backgorund
   fill(255,255,255);
-  rect(4,81,161,518); //tools
+  rect(10,81,220,588); //tools
   fill(192,192,192);
-  rect(0,0,978,48); //top
+  rect(0,0,1238,48); //top
   
   LineGraph.DrawAxis();
   for (int i=0;i<lineGraphValues.length; i++) {
@@ -256,8 +276,14 @@ void draw() {
       if (scroll){
         LineGraph.LineGraph(lineGraphSampleNumbers, lineGraphValues[i]);
       }
-      else{
+      else if (view){
         LineGraph.FLineGraph(fLineGraphSampleNumbers, fLineGraphValues);
+      }
+      else if (start){
+        LineGraph.FLineGraph(fLineGraphSampleNumbers, fLineGraphValues);
+      }
+      else{
+      scrollToggle.setState(true); 
       }
   }
 }
@@ -308,6 +334,7 @@ void CreateFile(){
 void CloseFile(){
   output.flush();
   output.close();
+
   println("closedFile");
 }
 
@@ -352,7 +379,7 @@ public void Path(){
 }
 
 void Start(){
-   start = true;
+ start = true;
  CreateFile(); 
   
 }
@@ -360,7 +387,13 @@ void Start(){
 void Stop(){
   
  CloseFile(); 
+ view = true;
+ start = false;
   
+}
+
+void Restart(){
+  setup();
 }
 
 void folderSelected(File selection) {
