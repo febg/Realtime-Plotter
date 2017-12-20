@@ -28,7 +28,9 @@ Graph LineGraph;
 float[][] lineGraphValues;
 float[] lineGraphSampleNumbers;
 ArrayList<Float> fLineGraphSampleNumbers;
-ArrayList<Float> fLineGraphValues;
+ArrayList<Float>  HLineGraphValuesT1;
+ArrayList<Float>  HLineGraphValuesT2;
+ArrayList<Float>  HLineGraphValuesP;
 float[] reversenumbers;
 color[] graphColors;
 PrintWriter output;
@@ -56,12 +58,14 @@ String topSketchPath;
 void setup() {
   
   LineGraph = new Graph(340, 140, 830, 470, color (20, 20, 200));
-  lineGraphValues = new float[2][500];
+  lineGraphValues = new float[3][500];
   lineGraphSampleNumbers = new float[500];
   fLineGraphSampleNumbers = new ArrayList<Float>();  
-  fLineGraphValues = new ArrayList<Float>();
+  HLineGraphValuesT1 = new ArrayList<Float>();
+  HLineGraphValuesT2 = new ArrayList<Float>();
+  HLineGraphValuesP = new ArrayList<Float>();
   reversenumbers = new float[36000];
-  graphColors = new color[2];
+  graphColors = new color[3];
   scroll = true;
   start = false;
   view = false;
@@ -82,7 +86,8 @@ void setup() {
   // set line graph colors
   addNumbers();  
   graphColors[0] = color(131, 255, 20);
-  graphColors[1] = color(232, 158, 12);
+  graphColors[1] = color(55, 149, 250);
+  graphColors[2] = color(232, 158, 12);
 
   // settings save file
   topSketchPath = sketchPath();
@@ -128,10 +133,10 @@ void setup() {
   fileName = cp5.addTextfield("FileName").setPosition(x=x+70, y).setText("NewFile").setWidth(100).setAutoClear(false);
   cp5.addButton("Save").setPosition(x = x+110, y).setWidth(40);
   cp5.addButton("Start").setPosition(x=x+90, y).setWidth(60);
-  cp5.addButton("Stop").setPosition(x+80, y).setWidth(60);
+  cp5.addButton("Stop").setPosition(x=x+80, y).setWidth(60);
   cp5.addButton("Restart").setPosition(x+80, y).setWidth(60);
   
-  scrollToggle = cp5.addToggle("scroll").setPosition(x=180, y=105).setMode(ControlP5.SWITCH);
+  scrollToggle = cp5.addToggle("scroll").setPosition(x=180, y=105).setMode(ControlP5.SWITCH).setColorActive(color(62, 12, 232));
   cp5.addTextlabel("label6").setText("Scroll [on/off]").setPosition(x=10, y= 105).setColor(0).setFont(createFont("Arial",14));
   
   
@@ -143,13 +148,22 @@ void setup() {
   cp5.addToggle("lgVisible1").setPosition(x=180, y=150).setValue(int(getPlotterConfigString("lgVisible1"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[0]);
   cp5.addButton("reset").setPosition(x=70, y= 348).setWidth(35).setHeight(12);
   
-  cp5.addTextlabel("multipliers").setText("Load [N]").setPosition(x=10, y = 260).setColor(0).setFont(createFont("Arial",14));
+  cp5.addTextlabel("multipliers").setText("Temperature 2 [C°]").setPosition(x=10, y = 260).setColor(0).setFont(createFont("Arial",14));
   cp5.addTextlabel("label4").setText("Current Value").setPosition(x=15, y= 290).setColor(0).setFont(createFont("Arial",12));
   cp5.addTextlabel("label5").setText("Max Value").setPosition(x=15, y= 318).setColor(0).setFont(createFont("Arial",12));
   pDisplay = cp5.addTextlabel("digital3").setText("45").setPosition(x=176, y = 289).setColor(0).setFont(createFont("Digital-7",18));
   mPDisplay = cp5.addTextlabel("digital4").setText("45").setPosition(x=176, y = 315).setColor(0).setFont(createFont("Digital-7",18));
-  
   cp5.addToggle("lgVisible2").setPosition(x=180, y=258).setValue(int(getPlotterConfigString("lgVisible2"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[1]);
+ 
+ 
+  cp5.addTextlabel("multiplierss").setText("Load [N]").setPosition(x=10, y = 370).setColor(0).setFont(createFont("Arial",14));
+  cp5.addTextlabel("label4").setText("Current Value").setPosition(x=15, y= 300).setColor(0).setFont(createFont("Arial",12));
+  cp5.addTextlabel("label5").setText("Max Value").setPosition(x=15, y= 328).setColor(0).setFont(createFont("Arial",12));
+  pDisplay = cp5.addTextlabel("digital3").setText("45").setPosition(x=176, y = 299).setColor(0).setFont(createFont("Digital-7",18));
+  mPDisplay = cp5.addTextlabel("digital4").setText("45").setPosition(x=176, y = 325).setColor(0).setFont(createFont("Digital-7",18));
+  cp5.addToggle("lgVisible3").setPosition(x=180, y=368).setValue(int(getPlotterConfigString("lgVisible3"))).setMode(ControlP5.SWITCH).setColorActive(graphColors[2]);
+ 
+ 
  
   Label label = path.getCaptionLabel();
   label.setColor(color(192, 192, 192));
