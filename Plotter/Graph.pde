@@ -265,7 +265,7 @@
           for (int t=0; t<ay.size(); t++){
             x[t] = px[t];
           }
-          println("FlineGraph");
+          println();
           
          for (int i=0; i<(x.length-1); i++){
                     strokeWeight(2);stroke(GraphColor);noFill();smooth();

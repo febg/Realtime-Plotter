@@ -251,8 +251,13 @@ void draw() {
             lineGraphValues[i][k] = lineGraphValues[i][k+1];
           }
           if (i == 0 && start){
-            fLineGraphValues.add(float(nums[0]));
-             
+            HLineGraphValuesT1.add(float(nums[0]));   
+          }
+          if (i == 0 && start){
+            HLineGraphValuesT2.add(float(nums[1]));  
+          }
+          if (i == 0 && start){
+            HLineGraphValuesP.add(float(nums[2]));
           }
           lineGraphValues[i][lineGraphValues[i].length-1] = float(nums[i]);
          
@@ -284,17 +289,31 @@ void draw() {
   rect(0,0,1238,48); //top
   
   LineGraph.DrawAxis();
-  for (int i=0;i<lineGraphValues.length; i++) {
+  for (int i=0;i<3; i++) {
     LineGraph.GraphColor = graphColors[i];
     if (int(getPlotterConfigString("lgVisible"+(i+1))) == 1)
       if (scroll){
         LineGraph.LineGraph(lineGraphSampleNumbers, lineGraphValues[i]);
       }
       else if (view){
-        LineGraph.FLineGraph(fLineGraphSampleNumbers, fLineGraphValues);
+        LineGraph.FLineGraph(fLineGraphSampleNumbers, HLineGraphValuesT1);
+         LineGraph.FLineGraph(fLineGraphSampleNumbers, HLineGraphValuesT2);
+          LineGraph.FLineGraph(fLineGraphSampleNumbers, HLineGraphValuesP);
       }
       else if (start){
-        LineGraph.FLineGraph(fLineGraphSampleNumbers, fLineGraphValues);
+           
+           LineGraph.GraphColor = graphColors[i];
+           switch (i){
+             case  0:  LineGraph.FLineGraph(fLineGraphSampleNumbers, HLineGraphValuesT1);
+                       println("T1");
+                       break;
+             case 1:   LineGraph.FLineGraph(fLineGraphSampleNumbers, HLineGraphValuesT2);
+                       println("T2");
+                       break;
+             case 2:   LineGraph.FLineGraph(fLineGraphSampleNumbers, HLineGraphValuesP);
+                       println("P");
+                       break;
+           }
       }
       else{
       scrollToggle.setState(true); 
